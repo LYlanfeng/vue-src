@@ -33,26 +33,34 @@ export function initLifecycle (vm: Component) {
   const options = vm.$options
 
   // locate first non-abstract parent
+  // 定位第一个非抽象父节点
   let parent = options.parent
   if (parent && !options.abstract) {
+    // 判断parent父亲节点是否存在，并且判断抽象节点是否存在
     while (parent.$options.abstract && parent.$parent) {
+      // 如果有父亲抽象节点，则把父层或爷爷节点   给当前节点的父亲节点
       parent = parent.$parent
     }
+    //子节点添加 vm
     parent.$children.push(vm)
   }
 
+  // 添加$parent 参数
   vm.$parent = parent
+  // 判断parent是否存在 如果是 则$root赋值给$root
   vm.$root = parent ? parent.$root : vm
 
+  // 情况 $children 节点
   vm.$children = []
+  // 获取节点的key
   vm.$refs = {}
 
-  vm._watcher = null
-  vm._inactive = null
-  vm._directInactive = false
-  vm._isMounted = false
-  vm._isDestroyed = false
-  vm._isBeingDestroyed = false
+  vm._watcher = null  //观察者
+  vm._inactive = null // 禁用的组件状态标志
+  vm._directInactive = false // 不活跃 禁用的组件标志
+  vm._isMounted = false // 标志是否 触发过 钩子Mounted
+  vm._isDestroyed = false // 是否已经销毁的组件标志
+  vm._isBeingDestroyed = false //是否已经销毁的组件标志 如果为true 则不触发 beforeDestroy 钩子函数 和destroyed 钩子函数
 }
 
 export function lifecycleMixin (Vue: Class<Component>) {
@@ -138,16 +146,26 @@ export function lifecycleMixin (Vue: Class<Component>) {
   }
 }
 
+/**
+ * mount 组件
+ * @param vm
+ * @param el
+ * @param hydrating
+ * @returns {Component}
+ */
 export function mountComponent (
   vm: Component,
   el: ?Element,
   hydrating?: boolean
 ): Component {
-  vm.$el = el
-  if (!vm.$options.render) {
+  vm.$el = el // dom
+  // 如果参数中没有渲染
+  if (!vm.$options.render) { // 实例化vm的渲染函数，虚拟dom调用参数的渲染函数
+    // 创建一个空的组件
     vm.$options.render = createEmptyVNode
     if (process.env.NODE_ENV !== 'production') {
       /* istanbul ignore if */
+      // 如果参数中的模板第一个不为# 号则会 警告
       if ((vm.$options.template && vm.$options.template.charAt(0) !== '#') ||
         vm.$options.el || el) {
         warn(
@@ -333,9 +351,16 @@ export function deactivateChildComponent (vm: Component, direct?: boolean) {
   }
 }
 
+/**
+ * 触发实例钩子
+ * @param vm 实例
+ * @param hook 钩子函数名称
+ */
 export function callHook (vm: Component, hook: string) {
   // #7573 disable dep collection when invoking lifecycle hooks
+  // 调用生命周期钩子时禁用dep集合
   pushTarget()
+  // 在vm 中添加声明周期函数
   const handlers = vm.$options[hook]
   const info = `${hook} hook`
   if (handlers) {

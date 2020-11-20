@@ -4,6 +4,7 @@ export let mark
 export let measure
 
 if (process.env.NODE_ENV !== 'production') {
+  //浏览器性能监控
   const perf = inBrowser && window.performance
   /* istanbul ignore if */
   if (

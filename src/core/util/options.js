@@ -272,10 +272,12 @@ const defaultStrat = function (parentVal: any, childVal: any): any {
  */
 function checkComponents (options: Object) {
   for (const key in options.components) {
+    // 验证组件名称 必须是大小写，并且是-横杆
     validateComponentName(key)
   }
 }
 
+// 验证组件名称 必须是大小写，并且是-横杆
 export function validateComponentName (name: string) {
   if (!new RegExp(`^[a-zA-Z][\\-\\.0-9_${unicodeRegExp.source}]*$`).test(name)) {
     warn(
@@ -384,6 +386,8 @@ function assertObjectType (name: string, value: any, vm: ?Component) {
 /**
  * Merge two option objects into a new one.
  * Core utility used in both instantiation and inheritance.
+ * 将两个对象合成一个对象 将父值对象和子值对象合并在一起，并且优先取值子值，如果没有则取子值
+ * 用于实例化和继承的核心实用程序。
  */
 export function mergeOptions (
   parent: Object,
@@ -391,6 +395,7 @@ export function mergeOptions (
   vm?: Component
 ): Object {
   if (process.env.NODE_ENV !== 'production') {
+    // 检验子组件
     checkComponents(child)
   }
 

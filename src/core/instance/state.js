@@ -318,13 +318,17 @@ function createWatcher (
 
 export function stateMixin (Vue: Class<Component>) {
   // flow somehow has problems with directly declared definition object
+  // 流在某种程度上与直接声明的定义对象有问题
   // when using Object.defineProperty, so we have to procedurally build up
+  // 在使用Object.defineProperty时，我们必须循序渐进地进行构建
   // the object here.
+  // 重新定义get 和set方法
   const dataDef = {}
   dataDef.get = function () { return this._data }
   const propsDef = {}
   propsDef.get = function () { return this._props }
   if (process.env.NODE_ENV !== 'production') {
+    // 避免替换实例根$data。 使用嵌套数据属性代替
     dataDef.set = function () {
       warn(
         'Avoid replacing instance root $data. ' +
@@ -332,6 +336,7 @@ export function stateMixin (Vue: Class<Component>) {
         this
       )
     }
+    // props 只是可度的数据不可以设置更改
     propsDef.set = function () {
       warn(`$props is readonly.`, this)
     }
