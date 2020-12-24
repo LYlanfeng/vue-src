@@ -22,9 +22,13 @@ function Vue (options) {
 
 // 初始化Mixin
 initMixin(Vue)
+// 初始化$data,$props,$set,$delete,$watch
 stateMixin(Vue)
+// 初始化$on,$once,$off,$emit
 eventsMixin(Vue)
+// 初始化_update,$forceUpdate,$destroy
 lifecycleMixin(Vue)
+// 初始化$nextTick,_render
 renderMixin(Vue)
 
 export default Vue

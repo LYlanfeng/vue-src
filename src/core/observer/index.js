@@ -44,13 +44,13 @@ export class Observer {
     this.dep = new Dep()
     this.vmCount = 0
     def(value, '__ob__', this)
-    if (Array.isArray(value)) {
-      if (hasProto) {
+    if (Array.isArray(value)) { // 数组
+      if (hasProto) { // 修改__proto__指向新的原型对象
         protoAugment(value, arrayMethods)
       } else {
         copyAugment(value, arrayMethods, arrayKeys)
       }
-      this.observeArray(value)
+      this.observeArray(value) // 观察数组
     } else {
       this.walk(value)
     }
@@ -108,7 +108,7 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * or the existing observer if the value already has one.
  */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
-  if (!isObject(value) || value instanceof VNode) {
+  if (!isObject(value) || value instanceof VNode) { // 不是对象，或者是Vnode，就不观察
     return
   }
   let ob: Observer | void
@@ -131,18 +131,23 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
 
 /**
  * Define a reactive property on an Object.
+ * 在对象上定义一个无功属性。
+ * 更新数据
+ * 通过defineProperty的set方法去通知notify()订阅者subscribers有新的值修改
+ * 添加观察者 get set方法
  */
 export function defineReactive (
-  obj: Object,
-  key: string,
-  val: any,
-  customSetter?: ?Function,
-  shallow?: boolean
+  obj: Object, // 对象
+  key: string, // 对象的key
+  val: any, // 对象的值
+  customSetter?: ?Function, // 日志函数
+  shallow?: boolean // 是否需要添加__ob__对象
 ) {
+  // 实例化一个依赖收集器对象，对象中有空的观察者列表
   const dep = new Dep()
 
   const property = Object.getOwnPropertyDescriptor(obj, key)
-  if (property && property.configurable === false) {
+  if (property && property.configurable === false) { // 如果不可编辑
     return
   }
 

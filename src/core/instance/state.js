@@ -45,31 +45,43 @@ export function proxy (target: Object, sourceKey: string, key: string) {
   Object.defineProperty(target, key, sharedPropertyDefinition)
 }
 
+/**
+ * 初始化状态
+ * @param vm
+ */
 export function initState (vm: Component) {
   vm._watchers = []
   const opts = vm.$options
-  if (opts.props) initProps(vm, opts.props)
-  if (opts.methods) initMethods(vm, opts.methods)
-  if (opts.data) {
+  if (opts.props) initProps(vm, opts.props) // 初始化props
+  if (opts.methods) initMethods(vm, opts.methods) // 初始化methods
+  if (opts.data) { // 初始化data
     initData(vm)
   } else {
     observe(vm._data = {}, true /* asRootData */)
   }
-  if (opts.computed) initComputed(vm, opts.computed)
-  if (opts.watch && opts.watch !== nativeWatch) {
+  if (opts.computed) initComputed(vm, opts.computed) // 初始化computed
+  if (opts.watch && opts.watch !== nativeWatch) { // 初始化watch
     initWatch(vm, opts.watch)
   }
 }
 
+/**
+ * 初始化props，检查数据格式是否正确，添加到观察者队列中
+ * @param vm
+ * @param propsOptions
+ */
 function initProps (vm: Component, propsOptions: Object) {
   const propsData = vm.$options.propsData || {}
   const props = vm._props = {}
   // cache prop keys so that future props updates can iterate using Array
+  // 缓存道具键，以便以后道具更新可以使用数组迭代
   // instead of dynamic object key enumeration.
+  // 而不是动态对象键枚举。
   const keys = vm.$options._propKeys = []
-  const isRoot = !vm.$parent
+  const isRoot = !vm.$parent // 是否没有父节点
   // root instance props should be converted
-  if (!isRoot) {
+  // 应该转换根实例道具
+  if (!isRoot) { // 有父组件 则不会监听 观察者
     toggleObserving(false)
   }
   for (const key in propsOptions) {
@@ -102,6 +114,7 @@ function initProps (vm: Component, propsOptions: Object) {
     // static props are already proxied on the component's prototype
     // during Vue.extend(). We only need to proxy props defined at
     // instantiation here.
+    //如果vm中没有props属性，则把他添加到vm中，这样组件this.[propsKey] 就可以获取到值了
     if (!(key in vm)) {
       proxy(vm, `_props`, key)
     }
@@ -359,6 +372,7 @@ export function stateMixin (Vue: Class<Component>) {
     options = options || {}
     options.user = true
     const watcher = new Watcher(vm, expOrFn, cb, options)
+    // 立即出发一次
     if (options.immediate) {
       try {
         cb.call(vm, watcher.value)

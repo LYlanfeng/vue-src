@@ -18,6 +18,10 @@ import {
   defineReactive
 } from '../util/index'
 
+/**
+ * 初始化Vue全局API
+ * @param Vue
+ */
 export function initGlobalAPI (Vue: GlobalAPI) {
   // config
   const configDef = {}
@@ -60,10 +64,15 @@ export function initGlobalAPI (Vue: GlobalAPI) {
   // components with in Weex's multi-instance scenarios.
   Vue.options._base = Vue
 
+  // 将KeepAlive合并到components上
   extend(Vue.options.components, builtInComponents)
 
+  // 初始化Vue.use方法
   initUse(Vue)
+  // 初始化Vue.mixin方法
   initMixin(Vue)
+  // 初始化Vue.extend方法
   initExtend(Vue)
+  // 初始化Vue.component,Vue.directive,Vue.filter方法
   initAssetRegisters(Vue)
 }

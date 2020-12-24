@@ -47,6 +47,7 @@ export function invokeWithErrorHandling (
       res.catch(e => handleError(e, vm, info + ` (Promise/async)`))
       // issue #9511
       // avoid catch triggering multiple times when nested calls
+      // 避免在嵌套调用时多次触发捕获
       res._handled = true
     }
   } catch (e) {
